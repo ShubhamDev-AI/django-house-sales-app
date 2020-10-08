@@ -14,22 +14,25 @@ import os
 import django_heroku
 from decouple import config
 from pathlib import Path
+import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-
+env = environ.Env(SECRET_KEY = str,)
+environ.Env.read_env(os.path.join(BASE_DIR,'.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wyn6#xj4uikpnqrszk^+f9)41$_p4^rb@qgh$@i7!yj$z48-60'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1','shoppingappmobile.herokuapp.com']
+DEBUG = env('DJANGO_DEBUG')
 
+
+ALLOWED_HOSTS = [env('DJANGO_ALLOWED_HOSTS')](" ")
 
 # Application definition
 
@@ -86,20 +89,12 @@ WSGI_APPLICATION = 'btre.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'btredb',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '',
-    #     'HOST': 'localhost'
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
     }
 }
-# db_from_env = dj_database_url.config(conn_max_age=600)
-# DATABASES['default'].update(db_from_env)
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -165,5 +160,5 @@ EMAIL_HOST_PASSWORD=''
 EMAIL_USE_TLS=True
 
 
+# Activate Django-Heroku.
 django_heroku.settings(locals())
-
